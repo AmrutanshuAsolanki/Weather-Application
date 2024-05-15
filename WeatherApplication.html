@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weather Application</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<h2>Weather Application</h2><br>
+<p>
+<div id="weather-container"></div>
+<label for="cityInput">Enter City:</label><br>
+<input type="text" id="cityInput"><br>
+<button onclick="searchWeather()">Search</button>
+</p>
+</div>
+<p>
+<div id="weatherInfo"></div>
+</p>
+<script>
+function searchWeather() {
+  // Get the user input (city name) from the input field
+  var city = document.getElementById("cityInput").value;
+  
+  // Make an API request to retrieve weather data for the specified city
+  var apiKey = '30b524ee15ae267556efc46584d863c8'; // Replace 'YOUR_API_KEY' with your actual API key
+  var apiUrl = 'https://api.openweathermap.org/data/2.5/weather?q=' + encodeURIComponent(city) + '&appid=' + apiKey;
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', apiUrl, true);
+  xhr.onload = function() {
+    if (xhr.status >= 200 && xhr.status < 300) {
+      // Request was successful, parse the JSON response
+      var response = JSON.parse(xhr.responseText);
+      displayWeather(response);
+    } else {
+      // Request failed, display an error message
+      document.getElementById("weatherInfo").innerHTML = "<p>Error: Unable to fetch weather data for the specified city.</p>";
+    }
+  };
+ /*{
+    document.getElementById("weatherInfo").innerHTML = "<p>Error: Unable to fetch weather data. Please try again later.</p>";
+  };*/
+  xhr.send();
+}
+
+function displayWeather(data) {
+  // Process the retrieved data and display it on the webpage
+  var weatherInfo = document.getElementById("weatherInfo");
+  if (data.cod === 200) {
+    var weatherDescription = data.weather[0].description;
+    var temperature = (data.main.temp - 273.15).toFixed(2); // Convert temperature to Celsius
+    weatherInfo.innerHTML = "<p>Weather in " + data.name + ": " + weatherDescription + "</p><p>Temperature: " + temperature + "°C</p>";
+  } else {
+    weatherInfo.innerHTML = "<p>Error: " + data.message + "</p>";
+  }
+}
+</script>
+
+</body>
+</html>
